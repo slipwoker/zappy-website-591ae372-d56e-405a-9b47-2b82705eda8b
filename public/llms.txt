@@ -1,0 +1,75 @@
+# בית הספר לתביעות קטנות — Generative Engine Optimization Map
+
+> An online legal education school led by Attorney and Dr. (Information Science) Yosef Solomon, targeting a general audience with a focus on young adults. The school teaches selected legal rights, practical skills for locating legal information in legal databases (legislation and case law), and how to properly prepare and file small claims independently. The tone is accessible, empowering, and beginner-friendly, with real-life examples and simulations. Classes are held online on Fridays. The brand combines legal authority with approachability, aiming to demystify the legal system for everyday people.
+
+---
+
+## Pages
+
+### בית
+https://-591ae372.zappy5.app
+למדו להגיש תביעות קטנות לבד בשיעורים מקוונים עם עו״ד ד״ר יוסף סולומון. דוגמאות אמיתיות, סימולציות וליווי צמוד בימי שישי. היכנסו עכשיו וקחו את הצדק לידיים!
+
+### תודה שפניתם אלינו
+https://-591ae372.zappy5.app/thank-you
+בית הספר לתביעות קטנות - תודה שפניתם אלינו
+
+## Legal & Policy
+
+### Privacy Policy
+https://-591ae372.zappy5.app/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://-591ae372.zappy5.app/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://-591ae372.zappy5.app/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+## How to Contact Us
+
+- (No contact details configured yet.)
+
+### Contact form
+- URL: https://-591ae372.zappy5.app
+- Endpoint: https://-591ae372.zappy5.app/api/email/contact-form
+- Method: POST
+- Content-Type: application/json
+- Fields:
+  - `name` (text)
+  - `email` (email)
+  - `phone` (tel)
+  - `message` (textarea)
+  - `privacy_consent` (checkbox)
+
+---
+
+# Business Context (for LLM understanding)
+
+## About בית הספר לתביעות קטנות
+An online legal education school led by Attorney and Dr. (Information Science) Yosef Solomon, targeting a general audience with a focus on young adults. The school teaches selected legal rights, practical skills for locating legal information in legal databases (legislation and case law), and how to properly prepare and file small claims independently. The tone is accessible, empowering, and beginner-friendly, with real-life examples and simulations. Classes are held online on Fridays. The brand combines legal authority with approachability, aiming to demystify the legal system for everyday people.
+
+## Target Audience
+- קהל כללי, בעיקר צעירים, המעוניינים ללמוד זכויות משפטיות, איתור מידע משפטי והגשת תביעות קטנות
+- יזמים ובעלי עסקים קטנים
+- סטודנטים וחוקרים
+- פנסיונרים פעילים
+- חובבי משפטים
+- צרכנים שניזוקו כספית בשל הטעיה צרכנית, ביטול טיסות, הודעות SPAM ספאם, או ניזוקו במרחב העירוני ורוצים לתבוע פיצוי
+- מי שרוצה לרכוש מיומנויות של איתור מידע משפטי והכנה עצמאית של תביעה קטנה
+- נוסעים בטיסות שבוטלו, המראתן התעכבה, או סבלו מ-OVER BOOKING רישום יתר או תקלה בטיסה, וכן מי שעישנו עליו במסעדה, אולם אירועים, בריכה, תחנת רכבת וכו'
+
+## Industry
+Legal Education
+
+---
+
+# Machine-readable feeds
+
+- Sitemap (XML): https://-591ae372.zappy5.app/sitemap.xml
+- Robots: https://-591ae372.zappy5.app/robots.txt
+- Flattened page text (for LLMs): https://-591ae372.zappy5.app/llms-full.txt
