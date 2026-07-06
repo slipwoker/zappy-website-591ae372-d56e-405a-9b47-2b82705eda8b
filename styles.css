@@ -68,15 +68,15 @@
   src: url('assets/fonts/Rubik-Bold.woff2') format('woff2');
 }
 :root {
-  --primary: #2B2621;
-  --secondary: #C96F4A;
-  --accent: #7B8462;
-  --bg-light: #F7F0E6;
+--primary: #2D5A3B;
+  --secondary: #A52A3D;
+  --accent: #D4780A;
+  --bg-light: #FFFFFF;
   --bg-dark: #2B2621;
-  --text-dark: #2B2621;
+  --text-dark: #4a4a4a;
   --text-light: #F7F0E6;
-  --text-muted: #7B8462;
-  --border-light: #E8D8C3;
+  --text-muted: #707070;
+  --border-light: #8b8275;
   --border-dark: #7B8462;
   --nav-bg: #F7F0E6;
   --nav-text: #2B2621;
@@ -98,6 +98,13 @@
   --spacing-element-gap: 16px;
   --transition-default: all 0.3s ease;
   --transition-hover: all 0.3s ease;
+  --primary-color: #2D5A3B;
+  --secondary-color: #A52A3D;
+  --accent-color: #D4780A;
+  --background-color: #FFFFFF;
+  --surface-color: #F5F7F5;
+  --text-color: #4a4a4a;
+  --text-secondary-color: #707070;
 }
 
 *, *::before, *::after {
@@ -272,8 +279,8 @@ small, .small-text {
 }
 
 .btn-primary:hover {
-  background-color: #b85e3a;
-  border-color: #b85e3a;
+  background-color: #A52A3D;
+  border-color: #A52A3D;
   color: #fff;
 }
 
@@ -329,7 +336,7 @@ html:not([dir]) .whatsapp-float {
   --nav-bg: #F7F0E6;
   --nav-text: #2B2621;
   --nav-text-hover: #C96F4A;
-  --primary: #2B2621;
+  --primary: #2D5A3B;
   --text-light: #F7F0E6;
 }
 
@@ -528,7 +535,7 @@ html:not([dir]) .whatsapp-float {
   --nav-bg: #F7F0E6;
   --nav-text: #2B2621;
   --nav-text-hover: #C96F4A;
-  --primary: #2B2621;
+  --primary: #2D5A3B;
   --text-light: #F7F0E6;
 }
 
@@ -793,7 +800,7 @@ html:not([dir]) .whatsapp-float {
 .navbar a:focus-visible,
 .navbar button:focus-visible,
 .nav-menu a:focus-visible {
-  outline: 2px solid var(--primary-color, var(--primary, #2B2621));
+  outline: 2px solid var(--primary-color, var(--primary, #2D5A3B));
   outline-offset: 2px;
 }
 
@@ -1451,7 +1458,7 @@ html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .dropdown-menu {
     order: 0 !important;
     padding: 16px 28px;
     border-radius: 999px;
-    background: var(--primary, var(--accent, #e85d2a)) !important;
+    background: var(--primary, var(--accent, #A52A3D)) !important;
     color: #ffffff !important;
     font-size: 1.1rem;
     font-weight: 700;
@@ -1865,12 +1872,12 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
 
 /* Footer Styles */
 .site-footer {
-  background-color: var(--bg-dark, #2B2621);
+  background-color: var(--bg-dark, #2D5A3B);
   color: var(--text-light, #F7F0E6);
   padding: 3rem 1.5rem 0;
   font-family: 'Rubik', sans-serif;
   direction: rtl;
-  border-top: 2px solid var(--secondary, #C96F4A);
+  border-top: 2px solid var(--secondary, #A52A3D);
 }
 
 .footer-container {
@@ -1883,7 +1890,7 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 2.5rem;
   padding-bottom: 2.5rem;
-  border-bottom: 1px solid var(--border-dark, #7B8462);
+  border-bottom: 1px solid var(--border-dark, #D4780A);
 }
 
 .footer-col h4 {
@@ -1902,7 +1909,7 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
   right: 0;
   width: 40px;
   height: 2px;
-  background-color: var(--secondary, #C96F4A);
+  background-color: var(--secondary, #A52A3D);
   border-radius: 2px;
 }
 
@@ -1951,7 +1958,7 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
 }
 
 .footer-links a:hover {
-  color: var(--secondary, #C96F4A);
+  color: var(--secondary, #A52A3D);
   transform: translateX(-4px);
 }
 
@@ -1970,7 +1977,7 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
 }
 
 .contact-icon {
-  color: var(--secondary, #C96F4A);
+  color: var(--secondary, #A52A3D);
   font-size: 0.9rem;
   width: 18px;
   text-align: center;
@@ -1985,7 +1992,7 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
 }
 
 .contact-text a:hover {
-  color: var(--secondary, #C96F4A);
+  color: var(--secondary, #A52A3D);
 }
 
 .footer-hours li {
@@ -2036,11 +2043,11 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
 }
 
 .footer-social a:hover {
-  background-color: var(--secondary, #C96F4A);
+  background-color: var(--secondary, #A52A3D);
   color: #fff;
   transform: translateY(-3px);
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  border-color: var(--secondary, #C96F4A);
+  border-color: var(--secondary, #A52A3D);
 }
 
 .footer-bottom {
@@ -2074,13 +2081,13 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
 }
 
 .footer-legal a:hover {
-  color: var(--secondary, #C96F4A);
-  border-bottom-color: var(--secondary, #C96F4A);
+  color: var(--secondary, #A52A3D);
+  border-bottom-color: var(--secondary, #A52A3D);
 }
 
 .zappy-attribution {
   font-weight: 500;
-  color: var(--secondary, #C96F4A) !important;
+  color: var(--secondary, #A52A3D) !important;
   opacity: 0.9;
 }
 
@@ -2132,7 +2139,7 @@ main:not(.courses-page-main) { margin-top: 0 !important; padding-top: 0 !importa
 
 
 /* V2 Decorative Helpers — quote marks */
-:root { --decorative-quote-color: var(--accent, #b48b59); --decorative-quote-font: var(--accent-font, var(--font-display, serif)); }
+:root { --decorative-quote-color: var(--accent, #A52A3D); --decorative-quote-font: var(--accent-font, var(--font-display, serif)); }
 blockquote::before, .quote::before, [data-quote]::before {
   content: "\201C";
   font-family: var(--decorative-quote-font);
@@ -2163,7 +2170,7 @@ hr.section-flourish, .section-flourish, [data-section-divider] {
   height: 2px;
   margin: 1.25rem auto;
   border: 0;
-  background: linear-gradient(90deg, transparent, var(--accent, var(--primary, #b48b59)) 30%, var(--accent, var(--primary, #b48b59)) 70%, transparent);
+  background: linear-gradient(90deg, transparent, var(--accent, var(--primary, #A0293B)) 30%, var(--accent, var(--primary, #A0293B)) 70%, transparent);
   border-radius: 999px;
   opacity: 0.85;
 }
@@ -2206,7 +2213,7 @@ hr.section-flourish, .section-flourish, [data-section-divider] {
 .site-footer .footer-bottom a,
 .site-footer .footer-bottom p,
 .site-footer .footer-bottom span:not(.separator) {
-  color: #7B8462 !important;
+  color: #ad6208 !important;
 }
 .site-footer .contact-list a:hover,
 .site-footer .footer-legal a:hover,
@@ -2214,7 +2221,7 @@ hr.section-flourish, .section-flourish, [data-section-divider] {
   color: #F7F0E6 !important;
 }
 .site-footer .footer-legal .separator {
-  color: #7B8462 !important;
+  color: #ad6208 !important;
 }
 /* Footer contact alignment fix */
 .footer-contact li > a { display: flex; align-items: flex-start; gap: inherit; }
@@ -3017,7 +3024,7 @@ main { flex: 1 0 auto; }
   grid-template-rows: auto auto;
   gap: 0 16px;
   background: rgba(247, 240, 230, 0.05);
-  border: 1px solid var(--border-dark, #7B8462);
+  border: 1px solid var(--border-dark, #D4780A);
   border-radius: var(--radius-card, 12px);
   padding: var(--spacing-card-padding, 32px);
   box-shadow: var(--shadow-card, 0 8px 30px rgba(0,0,0,0.14));
@@ -3030,7 +3037,7 @@ main { flex: 1 0 auto; }
 .index-capabilities-section .capability-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-  border-color: var(--secondary, #C96F4A);
+  border-color: var(--secondary, #A52A3D);
 }
 
 .index-capabilities-section .card-icon-wrapper {
@@ -3040,7 +3047,7 @@ main { flex: 1 0 auto; }
   align-items: flex-start;
   justify-content: center;
   padding-block-start: 4px;
-  color: var(--secondary, #C96F4A);
+  color: var(--secondary, #A52A3D);
 }
 
 .index-capabilities-section .card-icon {
@@ -3246,7 +3253,7 @@ main { flex: 1 0 auto; }
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #C96F4A;
+  background: #A52A3D;
   color: #FFFFFF;
   font-size: 1.25rem;
   font-weight: 700;
@@ -3285,7 +3292,7 @@ main { flex: 1 0 auto; }
   flex: 0 0 60px;
   padding: 0 4px;
   margin-top: 60px;
-  color: #7B8462;
+  color: #a35c08;
 }
 
 .index-process-section .step-arrow svg {
@@ -3327,7 +3334,7 @@ main { flex: 1 0 auto; }
   position: absolute;
   top: 20px;
   right: 20px;
-  background: #C96F4A;
+  background: #A52A3D;
   color: #FFFFFF;
   font-size: 0.85rem;
   font-weight: 600;
@@ -3894,7 +3901,7 @@ main { flex: 1 0 auto; }
 .index-cta-contact-section__form-input:focus,
 .index-cta-contact-section__form-textarea:focus {
   outline: none;
-  border-color: #C96F4A;
+  border-color: #A52A3D;
   box-shadow: 0 0 0 3px rgba(201, 111, 74, 0.2);
 }
 
@@ -3932,7 +3939,7 @@ main { flex: 1 0 auto; }
 
 /* Submit Button */
 .index-cta-contact-section__form-button {
-  background: #C96F4A;
+  background: #A52A3D;
   color: #FFFFFF;
   padding: 16px 24px;
   border-radius: var(--radius-btn, 8px);
@@ -3949,7 +3956,7 @@ main { flex: 1 0 auto; }
 }
 
 .index-cta-contact-section__form-button:hover {
-  background: #B55E3A;
+  background: #A52A3D;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(201, 111, 74, 0.4);
 }
@@ -4405,9 +4412,9 @@ html[dir="rtl"] .footer-contact li > a { flex-direction: row !important; }
   --cc-modal-bg: #ffffff;
   --cc-primary-color: #1f2937;
   --cc-secondary-color: #4b5563;
-  --cc-btn-primary-bg: #2b2621;
+  --cc-btn-primary-bg: #2D5A3B;
   --cc-btn-primary-color: #ffffff;
-  --cc-btn-primary-border: #2b2621;
+  --cc-btn-primary-border: #2D5A3B;
   --cc-btn-primary-hover-bg: #120d08;
   --cc-btn-primary-hover-border: #120d08;
   --cc-btn-primary-hover-color: #ffffff;
@@ -4423,7 +4430,7 @@ html[dir="rtl"] .footer-contact li > a { flex-direction: row !important; }
   --cc-btn-secondary-hover-bg: #e5e7eb;
   --cc-btn-secondary-hover-color: #111827;
   --cc-btn-secondary-hover-border: #d1d5db;
-  --cc-toggle-on-bg: #2b2621;
+  --cc-toggle-on-bg: #2D5A3B;
 }
 
 #cc-main,
@@ -4536,7 +4543,7 @@ html[dir="rtl"] .footer-contact li > a { flex-direction: row !important; }
  * defaults for the preferences modal's two secondary pills). */
 #zappy-cookie-banner .zappy-cookie-banner__button--customize {
   background-color: transparent !important;
-  color: #2b2621 !important;
+  color: #2D5A3B !important;
   border: none !important;
   padding: 0 8px !important;
   height: 32px !important;
@@ -4928,6 +4935,13 @@ div[id*="mic-access-tool-box"] button[class*="reset"] * {
 ._access-icon {
   display: flex !important;
 }
+
+
+/* === BUTTON TEXT OVERRIDES START === */
+.navbar .nav-cta-btn,
+.nav-cta-btn { color: #FFFFFF !important; }
+/* === BUTTON TEXT OVERRIDES END === */
+
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
