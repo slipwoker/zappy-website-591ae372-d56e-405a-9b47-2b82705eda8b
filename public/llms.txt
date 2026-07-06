@@ -7,25 +7,25 @@
 ## Pages
 
 ### בית
-https://example.com
+https://small-claims-school-dr-yosef-s.zappy5.app
 למדו להגיש תביעות קטנות לבד בשיעורים מקוונים עם עו״ד ד״ר יוסף סולומון. דוגמאות אמיתיות, סימולציות וליווי צמוד בימי שישי. היכנסו עכשיו וקחו את הצדק לידיים!
 
 ### תודה שפניתם אלינו
-https://example.com/thank-you
+https://small-claims-school-dr-yosef-s.zappy5.app/thank-you
 בית הספר לתביעות קטנות - תודה שפניתם אלינו
 
 ## Legal & Policy
 
 ### Privacy Policy
-https://example.com/privacy
+https://small-claims-school-dr-yosef-s.zappy5.app/privacy
 Information about how user data is collected, stored, and protected.
 
 ### Terms & Conditions
-https://example.com/terms
+https://small-claims-school-dr-yosef-s.zappy5.app/terms
 Legal terms describing service usage, rights, and policies.
 
 ### Accessibility Statement
-https://example.com/accessibility
+https://small-claims-school-dr-yosef-s.zappy5.app/accessibility
 Information about WCAG compliance and accessibility features.
 
 ---
@@ -38,8 +38,8 @@ Information about WCAG compliance and accessibility features.
 - Address: קרן היסוד 21, ראשון לציון
 
 ### Contact form
-- URL: https://example.com
-- Endpoint: https://example.com/api/email/contact-form
+- URL: https://small-claims-school-dr-yosef-s.zappy5.app
+- Endpoint: https://small-claims-school-dr-yosef-s.zappy5.app/api/email/contact-form
 - Method: POST
 - Content-Type: application/json
 - Fields:
@@ -73,6 +73,6 @@ Legal Education
 
 # Machine-readable feeds
 
-- Sitemap (XML): https://example.com/sitemap.xml
-- Robots: https://example.com/robots.txt
-- Flattened page text (for LLMs): https://example.com/llms-full.txt
+- Sitemap (XML): https://small-claims-school-dr-yosef-s.zappy5.app/sitemap.xml
+- Robots: https://small-claims-school-dr-yosef-s.zappy5.app/robots.txt
+- Flattened page text (for LLMs): https://small-claims-school-dr-yosef-s.zappy5.app/llms-full.txt
