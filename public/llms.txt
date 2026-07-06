@@ -32,7 +32,10 @@ Information about WCAG compliance and accessibility features.
 
 ## How to Contact Us
 
-- (No contact details configured yet.)
+- Email: Dr.YosefSolomon@gmail.com
+- Phone: 0523236556
+- Phone (tel): tel:0523236556
+- Address: קרן היסוד 21, ראשון לציון, אצל עו"ד ד"ר (מדעי המידע) יוסף סולומון
 
 ### Contact form
 - URL: https://example.com
