@@ -35,7 +35,7 @@ Information about WCAG compliance and accessibility features.
 - Email: Dr.YosefSolomon@gmail.com
 - Phone: 0523236556
 - Phone (tel): tel:0523236556
-- Address: קרן היסוד 21, ראשון לציון
+- Address: קרן היסוד 21, ראשון לציון, 7528505
 
 ### Contact form
 - URL: https://small-claims-school-dr-yosef-s.zappy5.app
