@@ -258,263 +258,6 @@
     
     <!-- Mickidum Accessibility Toolbar -->
     
-
-<style data-zappy-section-v2-css="true">
-/* V2 Regenerated Section CSS */
-.index-hero-section {
-  position: relative;
-  background-color: #FAF7F2;
-  background-image: 
-    radial-gradient(ellipse at 80% 20%, rgba(240, 224, 200, 0.6) 0%, transparent 50%),
-    radial-gradient(ellipse at 20% 80%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
-    linear-gradient(180deg, #FAF7F2 0%, #F0E8D8 100%);
-  color: var(--text-dark);
-  padding: 140px 16px 100px;
-  overflow: hidden;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  direction: rtl;
-}
-
-.index-hero-section__container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 10;
-}
-
-.index-hero-section__content {
-  max-width: 700px;
-  position: relative;
-  z-index: 10;
-}
-
-/* Badge */
-.index-hero-section__badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #C9A227;
-  background: rgba(201, 162, 39, 0.1);
-  padding: 8px 16px;
-  border-radius: 100px;
-  margin-block-end: 24px;
-  border: 1px solid rgba(201, 162, 39, 0.2);
-}
-
-/* Headline */
-.index-hero-section__headline {
-  font-family: 'Assistant', 'Noto Sans Hebrew', sans-serif;
-  font-size: 3.5rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
-  color: #2C2416;
-  margin: 0 0 24px 0;
-  text-align: start;
-}
-
-.index-hero-section__accent-word {
-  display: block;
-  background: linear-gradient(135deg, #C8593A 0%, #D4A843 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Subtitle */
-.index-hero-section__subtitle {
-  font-family: 'Heebo', 'Noto Sans Hebrew', sans-serif;
-  font-size: 1.25rem;
-  font-weight: 400;
-  line-height: 1.6;
-  color: #4A3E2E;
-  margin: 0 0 40px 0;
-  text-align: start;
-  max-width: 600px;
-}
-
-/* CTA Group */
-.index-hero-section__cta-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-block-end: 48px;
-  align-items: center;
-}
-
-.index-hero-section__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Heebo', 'Noto Sans Hebrew', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-}
-
-.index-hero-section__btn--primary {
-  background: #C8593A;
-  color: #FFFFFF;
-  padding: 14px 28px;
-  border-radius: 8px;
-  border: none;
-  box-shadow: 0 8px 32px rgba(200, 89, 58, 0.25);
-}
-
-.index-hero-section__btn--primary:hover {
-  background: #A8421E;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(200, 89, 58, 0.35);
-}
-
-.index-hero-section__btn--ghost {
-  background: transparent;
-  color: #2C2416;
-  padding: 14px 28px;
-  border-radius: 8px;
-  border: 1.5px solid #2C2416;
-}
-
-.index-hero-section__btn--ghost:hover {
-  background: rgba(44, 36, 22, 0.05);
-  transform: translateY(-2px);
-}
-
-.index-hero-section__btn i {
-  font-size: 0.9rem;
-}
-
-/* Features List */
-.index-hero-section__features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  align-items: center;
-}
-
-.index-hero-section__feature-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: 'Heebo', 'Noto Sans Hebrew', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #4A3E2E;
-  line-height: 1.5;
-}
-
-.index-hero-section__feature-item i {
-  color: #C8593A;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
-/* Watermark Decoration */
-.index-hero-section__watermark {
-  position: absolute;
-  top: 40px;
-  inset-inline-end: 40px;
-  width: 320px;
-  height: 320px;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.06;
-  color: #C9A227;
-}
-
-.index-hero-section__watermark svg {
-  width: 100%;
-  height: 100%;
-}
-
-/* Underline Accent */
-.index-hero-section__underline-accent {
-  position: absolute;
-  bottom: 80px;
-  inset-inline-start: 10%;
-  width: 180px;
-  height: auto;
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0.8;
-}
-
-.index-hero-section__underline-accent svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .index-hero-section {
-    padding: 120px 16px 60px;
-    min-height: auto;
-  }
-
-  .index-hero-section__content {
-    max-width: 100%;
-  }
-
-  .index-hero-section__headline {
-    font-size: 2.5rem;
-  }
-
-  .index-hero-section__subtitle {
-    font-size: 1.1rem;
-    margin-block-end: 32px;
-  }
-
-  .index-hero-section__cta-group {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-block-end: 32px;
-  }
-
-  .index-hero-section__btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .index-hero-section__features {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .index-hero-section__watermark {
-    width: 200px;
-    height: 200px;
-    top: 20px;
-    inset-inline-end: 10px;
-    opacity: 0.04;
-  }
-
-  .index-hero-section__underline-accent {
-    bottom: 40px;
-    width: 120px;
-    inset-inline-start: 5%;
-  }
-}
-/* ZAPPY_POSTGEN_GUARD_HERO_FONT_CAP:index-hero */
-.hero h1, .hero-section h1, [class*="hero-"] h1, [class~="hero"] h1, .hero .hero-title, .hero-title { font-size: 48px !important; line-height: 1.2 !important; }
-@media (max-width: 1024px) {
-  .hero h1, .hero-section h1, [class*="hero-"] h1, [class~="hero"] h1, .hero .hero-title, .hero-title { font-size: 36px !important; }
-}
-@media (max-width: 768px) {
-  .hero h1, .hero-section h1, [class*="hero-"] h1, [class~="hero"] h1, .hero .hero-title, .hero-title { font-size: 28px !important; }
-}
-
-</style>
     <style id="zappy-critical-above-fold-css">
 html{box-sizing:border-box;-webkit-text-size-adjust:100%}*,*::before,*::after{box-sizing:inherit}body{margin:0;min-width:320px;overflow-x:clip}img,svg,video{max-width:100%;height:auto}main{display:block}.container{width:min(100% - 32px,1200px);margin-inline:auto}.navbar,nav.navbar,header .navbar,header[role="banner"]{position:relative;z-index:1000;width:100%}.nav-container,.navbar .container{display:flex;align-items:center;justify-content:space-between;min-height:64px}.logo,.logo-link img{display:block;width:35px;height:35px;object-fit:contain}.nav-menu,#navMenu{list-style:none}.fa,.fas,.far,.fab,.fa-solid,.fa-regular,.fa-brands{display:inline-block;min-width:1em;text-align:center}html:not(#zappy-noop)[data-zappy-site-type="ecommerce"] .phone-header-btn,html:not(#zappy-noop) .navbar:has(.nav-ecommerce-icons)>.phone-header-btn{display:none!important;visibility:hidden!important;width:0!important;height:0!important;pointer-events:none!important}.hero-section,.index-hero-section,section[class*="hero"]{position:relative;overflow:hidden;min-height:560px}.hero-bg-wrapper,.hero-bg-image,section[class*="hero"] [class*="hero-bg"]{position:absolute;inset:0;width:100%;height:100%}.hero-bg-wrapper img,.hero-bg-image img,section[class*="hero"] [data-hero-bg],section[class*="hero"] img[data-hero-background="true"]{width:100%!important;height:100%!important;object-fit:cover!important;display:block}.hero-content,section[class*="hero"] .container{position:relative;z-index:2}@media(max-width:768px){:root{--header-height:72px;--total-header-height:72px;--zappy-mobile-menu-top:72px}html[data-zappy-site-type="ecommerce"] body{padding-top:var(--total-header-height,72px)}html[data-zappy-site-type="ecommerce"] body>nav.navbar,html[data-zappy-site-type="ecommerce"] body>.navbar:not(.zappy-catalog-menu){position:fixed!important;top:0;left:0;right:0;z-index:100000;width:100%;margin-bottom:0}.zappy-catalog-menu{position:fixed;top:var(--header-height,72px);left:0;right:0;z-index:99999}.nav-container,.navbar .container{min-height:60px}.nav-menu,#navMenu{max-width:100vw;overflow-x:hidden}.hero-section,.index-hero-section,section[class*="hero"]{min-height:100svh}.hero-bg-wrapper,.hero-bg-image,.hero-scrim{min-height:100svh}}
 </style>
@@ -523,6 +266,7 @@ html{box-sizing:border-box;-webkit-text-size-adjust:100%}*,*::before,*::after{bo
     <noscript><link rel="stylesheet" href="/styles.css"></noscript>
     
     <script>window.ZAPPY_WEBSITE_ID = "591ae372-d56e-405a-9b47-2b82705eda8b"; window.ZAPPY_API_BASE = "https://api.zappy5.com";</script>
+    <link rel="preload" as="image" href="/assets/site-index-hero-image-1.webp" fetchpriority="high">
 
     <style id="zappy-dropdown-submenu-styles">
       /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
@@ -1097,60 +841,52 @@ html{box-sizing:border-box;-webkit-text-size-adjust:100%}*,*::before,*::after{bo
 </script>
   
   <main id="main">
-    <section class="index-hero-section" data-layout-spec="בית-hero" data-hero-type="no-image" id="hero">
-  <!-- Decorative Motifs -->
-  <div class="index-hero-section__watermark" aria-hidden="true">
-    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M100 20 L180 180 L20 180 Z" stroke="#C9A227" stroke-width="1.5" stroke-linejoin="round" opacity="0.4"></path>
-      <circle cx="100" cy="130" r="8" stroke="#C9A227" stroke-width="1.5" opacity="0.4"></circle>
-      <line x1="100" y1="20" x2="100" y2="130" stroke="#C9A227" stroke-width="1.5" opacity="0.4"></line>
-      <path d="M60 180 L100 130 L140 180" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" opacity="0.4"></path>
+    <section data-band-index="0" id="hero" class="index-hero-section" data-layout-spec="בית-hero" data-hero-treatment="fade-bleed" style="--hero-fade-color: var(--bg-light);" data-hero-type="fullscreen-scrim">
+  <!-- Full-bleed background photo -->
+  <div data-zappy-zoom-wrapper="true" data-element-id="img-1783280898662-mlj7aq6fe" data-element-type="image" data-zappy-zoom-wrapper-width-mode="full" style="position: absolute !important; top: 0px !important; left: 0px !important; width: 100% !important; height: 100% !important; max-width: none !important; margin-left: 0px !important; margin-right: 0px !important; z-index: 0 !important; overflow: hidden !important;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true" data-zappy-zoom-wrapper-align="center"><img loading="eager" fetchpriority="high" class="hero-fade-img" data-hero-bg="true" data-placeholder="index-hero-image-1" data-context="A warm, documentary-style desk scene on a Friday morning: a laptop showing a legal database, printed small claims form, handwritten legal notes, a cup of coffee, glasses, and hands of a calm mentor-like figure reviewing documents. Natural light, soft shadows, warm tones of cream, espresso, and terracotta. The subject is placed toward the right side of the frame." width="1200" height="600" src="/assets/site-index-hero-image-1.webp" alt="שולחן עבודה עם מסמכים משפטיים, מחשב נייד, קפה ומחברת - אווירת למידה משפטית נינוחה" data-hero-background="true" data-element-type="image" data-element-id="img-1783280898662-mlj7aq6fe" style="object-position: 0% 50%; margin: 0px !important; position: absolute !important; left: 0% !important; top: 0% !important; width: 107.609% !important; height: 100% !important; max-width: none !important; max-height: none !important; display: block !important; object-fit: cover !important;" data-zappy-zoom="1" decoding="async"></div>
+
+  <!-- Fade-bleed content panel -->
+  <div class="hero-fade-content">
+    <!-- Decorative hand-drawn arrow SVG -->
+    <svg class="hero-decorative-arrow" data-element-type="icon" data-icon-type="svg" width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M115 20 L5 20" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4"></path>
+      <path d="M10 15 L2 20 L10 25" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
     </svg>
+
+    <!-- Eyebrow / Label -->
+    <p><span class="hero-eyebrow">בית הספר לתביעות קטנות - עו"ד ד"ר (מדעי המידע) יוסף סולומון</span>
+
+    
+    </p><!-- Main Headline --><h1 class="display-xl" style="text-align: start;">
+
+למדו להכין תביעה קטנה בצורה נכונה, מבוססת ומשכנעת.
+
+</h1>
+
+    <!-- Supporting Subtitle (H3) -->
+    <h3 class="hero-subtitle" style="text-align: center;"></h3><h3></h3><h1></h1><h3><span style="color: #2D5A3B !important"><span style="color: #2D5A3B !important"><span style="color: #2D5A3B !important"><h3 data-element-id="move-1783716588485-oc8ed4uk"><span style="font-size: 1.25rem; text-wrap-mode: initial;">שיעורים מקוונים ZOOM בימי שישי</span></h3><span style="color: #2D5A3B !important">בהדרכת&nbsp;<span><u>עו"ד וד"ר (מדעי המידע) יוסף סולומון</u></span></span></span></span></span></h3>
+
+    <!-- Body Paragraph -->
+    <h3><b><span style="color: #d4780a !important"></span></b><span style="color: #d4780a !important"><b><span>למדו להכין תביעה קטנה אישית בצורה נכונה,&nbsp; מבוססת ומשכנעת, באמצעות דוגמאות אמיתיות מתחומי ביטולי טיסות, הודעות ספאם, עישון במקומות </span></b><span><b><span>ציבוריים, הטעיה צרכנית ונזקים במרחב העירוני.&nbsp;</span></b>&nbsp;
+
+לאורך הדרך תרכשו כלים מעשיים להבנת זכויותיכם, לאיתור מידע משפטי עדכני ולביסוס הטענות שלכם.<br><br></span></span><span style="color: #4a4a4a !important"></span>
+
+</h3>
+
+    <!-- CTA Buttons -->
+    <div class="hero-cta-group" style="justify-content: center; width: 100%; margin-left: 0px; margin-right: 0px; text-align: center;">
+      <p><a href="#features" class="btn btn-primary" data-element-type="button" data-element-id="btn-1783280898658-74sq4qzvo" data-native-element="true" style="outline: none; border-color: rgb(165, 42, 61) !important; color: var(--light-text, #ffffff) !important; background-color: rgb(165, 42, 61) !important; background-image: none !important;" data-text-color="light">מה לומדים?</a>
+      </p><p><a href="#cta-contact" class="btn btn-primary" data-element-type="button" data-element-id="btn-1783280898658-insh0l04n" data-native-element="true" style="outline: none; border-color: var(--primary-color, var(--primary, #8B0000)) !important; color: rgb(255, 255, 255) !important; background-color: var(--primary-color, var(--primary, #8B0000)) !important; background-image: none !important;">ליצירת קשר!</a>
+    </p></div>
+
+    <!-- Reassurance Line -->
+    <p class="hero-reassurance"><span style="color: #2d5a3b !important"><b>קורס שישרת אתכם גם מעבר לתביעה הקטנה הראשונה...</b></span></p>
   </div>
 
-  <div class="index-hero-section__container">
-    <div class="index-hero-section__content">
-      <span class="index-hero-section__badge">בית הספר לתביעות קטנות</span>
-      <h1 class="index-hero-section__headline">
-        הידע המשפטי
-        <span class="index-hero-section__accent-word">שמגיע לך</span>
-      </h1>
-      <h3 class="index-hero-section__subtitle">
-        קורסים פרונטליים ואונליין בהנחיית עו"ד ד"ר יוסף סולומון. ללמוד איך לאתר מידע משפטי, להכין תביעה קטנה ולהגיש אותה בעצמך — בביטחון מלא.
-      </h3>
-      
-      <div class="index-hero-section__cta-group">
-        <a href="#register" class="index-hero-section__btn index-hero-section__btn--primary">
-          להרשמה לשיעור הקרוב
-          <i class="fas fa-arrow-left" aria-hidden="true"></i>
-        </a>
-        <a href="#about" class="index-hero-section__btn index-hero-section__btn--ghost">
-          להכיר את המרצה
-          <i class="fas fa-arrow-left" aria-hidden="true"></i>
-        </a>
-      </div>
-
-      <div class="index-hero-section__features">
-        <div class="index-hero-section__feature-item">
-          <i class="fas fa-check-circle" aria-hidden="true"></i>
-          <span>שיעורים פרונטליים בימי שישי</span>
-        </div>
-        <div class="index-hero-section__feature-item">
-          <i class="fas fa-check-circle" aria-hidden="true"></i>
-          <span>הכנה מעשית עם דוגמאות אמיתיות</span>
-        </div>
-        <div class="index-hero-section__feature-item">
-          <i class="fas fa-check-circle" aria-hidden="true"></i>
-          <span>ללא ידע משפטי קודם</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Curved Underline Accent -->
-  <div class="index-hero-section__underline-accent" aria-hidden="true">
-    <svg viewBox="0 0 180 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 6 Q40 0 90 6 T180 6" stroke="#C8593A" stroke-width="3" stroke-linecap="round" fill="none"></path>
+  <!-- Torn-paper SVG divider at bottom -->
+  <div class="hero-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 L0,65 Q40,60 80,63 T160,58 Q200,62 240,57 T320,63 Q360,58 400,62 T480,57 Q520,63 560,58 T640,62 Q680,57 720,63 T800,58 Q840,62 880,57 T960,63 Q1000,58 1040,62 T1120,57 Q1160,63 1200,58 L1200,80 Z" fill="#FAF7F2"></path>
     </svg>
   </div>
 </section>
