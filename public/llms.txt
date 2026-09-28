@@ -37,25 +37,6 @@ Information about WCAG compliance and accessibility features.
 - Phone (tel): tel:0523236556
 - Address: קרן היסוד 21, ראשון לציון, 7528505
 
-### Contact form
-- URL: https://small-claims-school-dr-yosef-s.zappy5.app
-- Endpoint: https://small-claims-school-dr-yosef-s.zappy5.app/api/email/contact-form
-- Method: POST
-- Content-Type: application/json
-- Fields:
-  - `case_type` (radio, required)
-  - `case_type` (radio, required)
-  - `case_type` (radio, required)
-  - `case_type` (radio, required)
-  - `filed_document` (radio, required)
-  - `filed_document` (radio, required)
-  - `economically_viable` (radio, required)
-  - `economically_viable` (radio, required)
-  - `full_name` (text, required)
-  - `email` (email, required)
-  - `phone` (tel, required)
-  - `privacy_consent` (checkbox, required)
-
 ---
 
 # Business Context (for LLM understanding)

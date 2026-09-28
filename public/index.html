@@ -399,10 +399,14 @@
     return 'zappy_purchase_fired_' + String(orderId || '');
   }
 
+  function purchaseMetaDedupKey(orderId) {
+    return 'zappy_purchase_meta_fired_' + String(orderId || '');
+  }
+
   function alreadyFiredPurchase(orderId) {
     if (!orderId) return false;
     try {
-      return sessionStorage.getItem(purchaseDedupKey(orderId)) === '1';
+      return window.sessionStorage.getItem(purchaseDedupKey(orderId)) === '1';
     } catch (e) {
       return false;
     }
@@ -410,8 +414,77 @@
 
   function markPurchaseFired(orderId) {
     if (!orderId) return;
-    try { sessionStorage.setItem(purchaseDedupKey(orderId), '1'); } catch (e) {}
+    try { window.sessionStorage.setItem(purchaseDedupKey(orderId), '1'); } catch (e) {}
   }
+
+  function alreadyFiredPurchaseMeta(orderId) {
+    if (!orderId) return false;
+    try {
+      return window.sessionStorage.getItem(purchaseMetaDedupKey(orderId)) === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function markPurchaseMetaFired(orderId) {
+    if (!orderId) return;
+    try { window.sessionStorage.setItem(purchaseMetaDedupKey(orderId), '1'); } catch (e) {}
+  }
+
+  function getPendingMetaEvents() {
+    try {
+      if (!Array.isArray(window.__zappyPendingMetaEvents)) {
+        window.__zappyPendingMetaEvents = [];
+      }
+      return window.__zappyPendingMetaEvents;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function enqueueMetaEvent(eventName, params, orderId) {
+    var q = getPendingMetaEvents();
+    if (orderId) {
+      for (var i = 0; i < q.length; i++) {
+        if (q[i] && q[i].orderId === orderId && q[i].eventName === eventName) return;
+      }
+    }
+    q.push({ eventName: eventName, params: params || {}, orderId: orderId || null });
+  }
+
+  /**
+   * Live sites replace the eager Meta snippet with a consent-gated lazy
+   * loader. Payment providers bounce the shopper back to /order-success
+   * before CookieConsent hydrates, so confirm-order used to fire Purchase
+   * while window.fbq was still undefined — then sessionStorage blocked a
+   * retry. Queue until fbq exists, then flush.
+   */
+  function flushPendingMetaEvents() {
+    if (typeof window.fbq !== 'function') return;
+    var q = getPendingMetaEvents().slice();
+    try { window.__zappyPendingMetaEvents = []; } catch (e) {}
+    for (var i = 0; i < q.length; i++) {
+      var item = q[i];
+      if (!item || !item.eventName) continue;
+      if (item.orderId && alreadyFiredPurchaseMeta(item.orderId)) continue;
+      try {
+        window.fbq('track', item.eventName, item.params || {});
+        if (item.orderId) markPurchaseMetaFired(item.orderId);
+      } catch (e2) {}
+    }
+  }
+  window.zappyFlushPendingMetaEvents = flushPendingMetaEvents;
+
+  var metaFlushAttempts = 0;
+  var metaFlushTimer = setInterval(function() {
+    metaFlushAttempts++;
+    flushPendingMetaEvents();
+    var pendingLen = 0;
+    try { pendingLen = (window.__zappyPendingMetaEvents || []).length; } catch (e) {}
+    if ((pendingLen === 0 && typeof window.fbq === 'function') || metaFlushAttempts > 60) {
+      clearInterval(metaFlushTimer);
+    }
+  }, 500);
 
   /**
    * Fire a marketing event to first-party analytics + GA4/GTM/Meta when present.
@@ -431,15 +504,19 @@
         metadata.pagePath = pagePath();
       }
 
+      var oid = '';
+      var purchaseAlreadySent = false;
+      var purchaseMetaAlreadySent = false;
       if (eventId === 'checkout_complete') {
-        var oid = String(metadata.orderId || metadata.order_id || metadata.transaction_id || '');
-        if (oid && alreadyFiredPurchase(oid)) return;
-        if (oid) markPurchaseFired(oid);
+        oid = String(metadata.orderId || metadata.order_id || metadata.transaction_id || '');
+        purchaseAlreadySent = !!(oid && alreadyFiredPurchase(oid));
+        purchaseMetaAlreadySent = !!(oid && alreadyFiredPurchaseMeta(oid));
+        if (purchaseAlreadySent && purchaseMetaAlreadySent) return;
       }
 
       // First-party (skip when already tracked via zappyTrackEcomAnalytics path
       // that opts out, or when caller already recorded under a different name)
-      if (!opts.skipFirstParty) {
+      if (!opts.skipFirstParty && !purchaseAlreadySent) {
         try {
           if (window.zappyAnalytics && typeof window.zappyAnalytics.track === 'function') {
             window.zappyAnalytics.track(eventId, metadata);
@@ -448,40 +525,53 @@
       }
 
       // GTM / dataLayer — platform-standard ecommerce event names
-      try {
-        window.dataLayer = window.dataLayer || [];
-        if (plat.ecom) {
-          var ga4ForGtm = buildGa4Params(eventId, metadata);
-          var ecommerce = {};
-          if (ga4ForGtm.transaction_id) ecommerce.transaction_id = ga4ForGtm.transaction_id;
-          if (ga4ForGtm.value != null) ecommerce.value = ga4ForGtm.value;
-          if (ga4ForGtm.currency) ecommerce.currency = ga4ForGtm.currency;
-          if (ga4ForGtm.items) ecommerce.items = ga4ForGtm.items;
-          window.dataLayer.push({ event: plat.gtm, ecommerce: ecommerce });
-          // Secondary Zappy-specific trigger for merchants who want it
-          if (eventId === 'checkout_complete' || eventId === 'checkout_started') {
-            window.dataLayer.push({ event: eventId, ecommerce: ecommerce });
+      if (!purchaseAlreadySent) {
+        try {
+          window.dataLayer = window.dataLayer || [];
+          if (plat.ecom) {
+            var ga4ForGtm = buildGa4Params(eventId, metadata);
+            var ecommerce = {};
+            if (ga4ForGtm.transaction_id) ecommerce.transaction_id = ga4ForGtm.transaction_id;
+            if (ga4ForGtm.value != null) ecommerce.value = ga4ForGtm.value;
+            if (ga4ForGtm.currency) ecommerce.currency = ga4ForGtm.currency;
+            if (ga4ForGtm.items) ecommerce.items = ga4ForGtm.items;
+            window.dataLayer.push({ event: plat.gtm, ecommerce: ecommerce });
+            // Secondary Zappy-specific trigger for merchants who want it
+            if (eventId === 'checkout_complete' || eventId === 'checkout_started') {
+              window.dataLayer.push({ event: eventId, ecommerce: ecommerce });
+            }
+          } else {
+            var dl = { event: plat.gtm };
+            for (var k in metadata) {
+              if (Object.prototype.hasOwnProperty.call(metadata, k)) dl[k] = metadata[k];
+            }
+            window.dataLayer.push(dl);
           }
+        } catch (e2) {}
+
+        // GA4 gtag
+        try {
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', plat.ga4, buildGa4Params(eventId, metadata));
+          }
+        } catch (e3) {}
+
+        if (oid) markPurchaseFired(oid);
+      }
+
+      // Meta Pixel — live sites lazy-load fbq after marketing consent. If the
+      // stub is not defined yet, queue and flush when the pixel arrives.
+      try {
+        if (purchaseMetaAlreadySent) {
+          // already delivered to Meta
         } else {
-          var dl = { event: plat.gtm };
-          for (var k in metadata) {
-            if (Object.prototype.hasOwnProperty.call(metadata, k)) dl[k] = metadata[k];
+          var metaParams = buildMetaParams(eventId, metadata);
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', plat.meta, metaParams);
+            if (oid) markPurchaseMetaFired(oid);
+          } else {
+            enqueueMetaEvent(plat.meta, metaParams, eventId === 'checkout_complete' ? oid : null);
           }
-          window.dataLayer.push(dl);
-        }
-      } catch (e2) {}
-
-      // GA4 gtag
-      try {
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', plat.ga4, buildGa4Params(eventId, metadata));
-        }
-      } catch (e3) {}
-
-      // Meta Pixel (only when fbq is loaded — consent-gated lazy loader)
-      try {
-        if (typeof window.fbq === 'function') {
-          window.fbq('track', plat.meta, buildMetaParams(eventId, metadata));
         }
       } catch (e4) {}
     } catch (err) {}
@@ -599,7 +689,7 @@
     <meta name="twitter:title" content="בית הספר לתביעות קטנות | קורס להכנת תביעה קטנה | עו״ד ד״ר (מדעי המידע) יוסף סולומון">
     <meta name="twitter:description" content="למדו להכין תביעה קטנה בצורה נכונה, באמצעות דוגמאות אמיתיות מעולם הצרכנות: ביטולי טיסות, הודעות ספאם, עישון במקומות ציבוריים, הטעיה צרכנית ונזקים במרחב העירוני. בקורס תרכשו כלים להבנת הזכויות שלכם, לאיתור מידע משפטי ולהכנת תביעה קטנה ברורה, מבוססת ומשכנעת.">
     <meta name="twitter:image" content="https://small-claims-school-dr-yosef-s.zappy5.app/assets/business-general-service-upload-1783467007122-og.jpg">
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LocalBusiness","@id":"https://small-claims-school-dr-yosef-s.zappy5.app#organization","name":"בית הספר לתביעות קטנות - עו\"ד ד\"ר (מדעי המידע) יוסף סולומון","url":"https://small-claims-school-dr-yosef-s.zappy5.app","description":"An online legal education school led by Attorney and Dr. (Information Science) Yosef Solomon, targeting a general audience with a focus on young adults. The school teaches selected legal rights, practical skills for locating legal information in legal databases (legislation and case law), and how to properly prepare and file small claims independently. The tone is accessible, empowering, and beginner-friendly, with real-life examples and simulations. Classes are held online on Fridays. The brand combines legal authority with approachability, aiming to demystify the legal system for everyday people.","address":{"@type":"PostalAddress","streetAddress":"קרן היסוד 21, ראשון לציון, 7528505"},"contactPoint":[{"@type":"ContactPoint","contactType":"customer service","email":"Dr.YosefSolomon@gmail.com","telephone":"0523236556"}]},{"@type":"WebSite","@id":"https://small-claims-school-dr-yosef-s.zappy5.app#website","url":"https://small-claims-school-dr-yosef-s.zappy5.app","name":"בית הספר לתביעות קטנות - עו\"ד ד\"ר (מדעי המידע) יוסף סולומון","publisher":{"@id":"https://small-claims-school-dr-yosef-s.zappy5.app#organization"}},{"@type":"ContactPage","@id":"https://small-claims-school-dr-yosef-s.zappy5.app#contactpage","url":"https://small-claims-school-dr-yosef-s.zappy5.app","name":"בית הספר לתביעות קטנות | קורס להכנת תביעה קטנה | עו״ד ד״ר (מדעי המידע) יוסף סולומון","mainEntity":{"@id":"https://small-claims-school-dr-yosef-s.zappy5.app#organization"},"potentialAction":{"@type":"CommunicateAction","target":{"@type":"EntryPoint","urlTemplate":"https://small-claims-school-dr-yosef-s.zappy5.app/api/email/contact-form","actionPlatform":["http/method=POST"],"contentType":"application/json"},"instrument":[{"@type":"PropertyValue","name":"case_type","propertyID":"radio","valueRequired":true},{"@type":"PropertyValue","name":"case_type","propertyID":"radio","valueRequired":true},{"@type":"PropertyValue","name":"case_type","propertyID":"radio","valueRequired":true},{"@type":"PropertyValue","name":"case_type","propertyID":"radio","valueRequired":true},{"@type":"PropertyValue","name":"filed_document","propertyID":"radio","valueRequired":true},{"@type":"PropertyValue","name":"filed_document","propertyID":"radio","valueRequired":true},{"@type":"PropertyValue","name":"economically_viable","propertyID":"radio","valueRequired":true},{"@type":"PropertyValue","name":"economically_viable","propertyID":"radio","valueRequired":true},{"@type":"PropertyValue","name":"full_name","propertyID":"text","valueRequired":true,"description":"ישראל ישראלי"},{"@type":"PropertyValue","name":"email","propertyID":"email","valueRequired":true,"description":"israel@example.com"},{"@type":"PropertyValue","name":"phone","propertyID":"tel","valueRequired":true,"description":"050-1234567"},{"@type":"PropertyValue","name":"privacy_consent","propertyID":"checkbox","valueRequired":true}]}}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LocalBusiness","@id":"https://small-claims-school-dr-yosef-s.zappy5.app#organization","name":"בית הספר לתביעות קטנות - עו\"ד ד\"ר (מדעי המידע) יוסף סולומון","url":"https://small-claims-school-dr-yosef-s.zappy5.app","description":"An online legal education school led by Attorney and Dr. (Information Science) Yosef Solomon, targeting a general audience with a focus on young adults. The school teaches selected legal rights, practical skills for locating legal information in legal databases (legislation and case law), and how to properly prepare and file small claims independently. The tone is accessible, empowering, and beginner-friendly, with real-life examples and simulations. Classes are held online on Fridays. The brand combines legal authority with approachability, aiming to demystify the legal system for everyday people.","address":{"@type":"PostalAddress","streetAddress":"קרן היסוד 21, ראשון לציון, 7528505"},"contactPoint":[{"@type":"ContactPoint","contactType":"customer service","email":"Dr.YosefSolomon@gmail.com","telephone":"0523236556"}]},{"@type":"WebSite","@id":"https://small-claims-school-dr-yosef-s.zappy5.app#website","url":"https://small-claims-school-dr-yosef-s.zappy5.app","name":"בית הספר לתביעות קטנות - עו\"ד ד\"ר (מדעי המידע) יוסף סולומון","publisher":{"@id":"https://small-claims-school-dr-yosef-s.zappy5.app#organization"}}]}</script>
     <meta property="og:url" content="https://small-claims-school-dr-yosef-s.zappy5.app">
     <meta property="og:type" content="website">
   <meta property="og:locale" content="he_IL">
@@ -1101,7 +1191,7 @@ body:has(.zappy-announcement-bar) .navbar:not(.zappy-catalog-menu):not(.mobile-s
     
     
     
-    <div class="nav-cta-container"><li class="nav-cta-item"><a href="#cta-contact" class="nav-cta-btn">מעוניינים ללמוד? צרו קשר</a></li></div>
+    <div class="nav-cta-container"></div>
   </div>
 </nav>
 <script>
@@ -1575,7 +1665,7 @@ body:has(.zappy-announcement-bar) .navbar:not(.zappy-catalog-menu):not(.mobile-s
     </svg>
 
     <!-- Eyebrow / Label -->
-    <!-- Main Headline --><h1 class="display-xl" style="text-align: center;">כתבתם לבד תביעה קטנה, אך היא נדחתה או נמחקה? <br><br>שכר הטרחה שדרשו מכם להכנת תביעה קטנה יקר ולא כלכלי?<br><br>&nbsp; &nbsp; &nbsp; רוצים ללמוד להכין בעצמכם תביעה קטנה בצורה נכונה, מבוססת ומשכנעת?&nbsp;&nbsp;</h1><h3></h3><h3 style="text-align: center;">סדנת זום מעשית (לייב) בהנחיית עו"ד ד"ר יוסף סולומון. למדו להכיר את זכויותיכם, לרכוש מיומנות באיתור מידע משפטי בעצמכם, ולהכין בצורה מושכלת וזהירה כתב תביעה נכון בסיוע AI עם פרומפט ומתודולוגיה סדורה.</h3><h3 style="text-align: center;" data-element-id="move-1783676700443-0hbwgwjn">הקורס משלב מתודולוגיה אקדמית לאיתור מידע משפטי עם תרגול מעשי. תלמדו לזהות עילות תביעה, לאתר חקיקה ופסיקה, ולבנות כתב תביעה סדור ומנומק – בשימוש מבוקר ומושכל בכלי AI.</h3><h3></h3><h3 style="text-align: center;"><span style="color: #00BCD4 !important">✓&nbsp; אין צורך בידע משפטי קודם.&nbsp;&nbsp;✓&nbsp; שיעורים מקוונים (ZOOM) בימי שישי.&nbsp;&nbsp;✓&nbsp; קבוצות לימוד קטנות.&nbsp;&nbsp;✓&nbsp; קבלת צ'ק-ליסט מסמכים מלא.</span></h3><br><b><br></b>
+    <!-- Main Headline --><h1 class="display-xl" style="text-align: center;">כותבים תביעה קטנה בתחום זכויות נוסעים בתעופה וצריכים להפנות לפסקי דין שתומכים בטענות שלכם?&nbsp;<br><br></h1><h3></h3><h3 style="text-align: center;">סדנת זום מעשית (לייב) בהנחיית עו"ד ד"ר יוסף סולומון. למדו להכיר את זכויותיכם, לרכוש מיומנות באיתור מידע משפטי בעצמכם, ולהכין בצורה מושכלת וזהירה כתב תביעה נכון בסיוע AI עם פרומפט ומתודולוגיה סדורה.</h3><h3 style="text-align: center;" data-element-id="move-1783676700443-0hbwgwjn">הקורס משלב מתודולוגיה אקדמית לאיתור מידע משפטי עם תרגול מעשי. תלמדו לזהות עילות תביעה, לאתר חקיקה ופסיקה, ולבנות כתב תביעה סדור ומנומק – בשימוש מבוקר ומושכל בכלי AI.</h3><h3></h3><h3 style="text-align: center;"><span style="color: #00BCD4 !important">✓&nbsp; אין צורך בידע משפטי קודם.&nbsp;&nbsp;✓&nbsp; שיעורים מקוונים (ZOOM) בימי שישי.&nbsp;&nbsp;✓&nbsp; קבוצות לימוד קטנות.&nbsp;&nbsp;✓&nbsp; קבלת צ'ק-ליסט מסמכים מלא.</span></h3><br><b><br></b>
 
     <!-- Supporting Subtitle (H3) -->
     <h3 class="hero-subtitle" style="text-align: center;"></h3><h3></h3><h1></h1>
@@ -1610,8 +1700,8 @@ body:has(.zappy-announcement-bar) .navbar:not(.zappy-catalog-menu):not(.mobile-s
     <div class="ethical-warning__accent-bar"></div>
     <h2 id="ethical-warning-heading" class="ethical-warning__heading" style="color: #00E5FF">לפעמים, הצעד הנכון ביותר הוא לקחת את הזמן.</h2>
     <div class="ethical-warning__content">
-      <p class="ethical-warning__text" style="color: #E8E4DB">
-        הטעות הנפוצה ביותר של תובעים בתביעות קטנות היא הריצה להגשת התיק כשהוא אינו בשל. כתיבה 'מהבטן' או "מהלב", ללא עילות משפטיות מוגדרות, ללא טענות סדורות, ללא הוכחה ברורה של הנזק וללא איתור פסיקה מתאימה. טעות שמובילה פעם אחר פעם להפסד בתביעות, לדחייתן או למחיקה על הסף...
+      <p class="ethical-warning__text" style="color: rgb(232, 228, 219);">
+        הטעות הנפוצה ביותר של תובעים בתביעות קטנות היא הריצה להגשת התיק כשהוא אינו בשל. כתיבה 'מהבטן' או "מהלב", ללא עילות משפטיות מוגדרות, ללא טענות סדורות, ללא הוכחה של הנזק <b>וללא איתור פסיקה מתאימה</b>. טעות שמובילה פעם אחר פעם להפסד בתביעות, לדחייתן או למחיקה על הסף...
       </p>
       <p class="ethical-warning__text ethical-warning__text--emphasis" style="color: #E8E4DB">
         צדק דורש הכנה קפדנית. הסדנה מלמדת אתכם לעצור, לנסח בצורה מושכלת וזהירה, ורק אז להגיש.
@@ -2004,7 +2094,7 @@ body:has(.zappy-announcement-bar) .navbar:not(.zappy-catalog-menu):not(.mobile-s
         <!-- Thin olive-gray rule line -->
         <line x1="0" y1="0" x2="1200" y2="0" stroke="rgba(139,105,20,0.15)" stroke-width="1"></line>
         <!-- Cream to Dark Espresso wave filling bottom -->
-        <path d="M0,80 L0,20 Q150,5 300,25 T600,15 Q750,30 900,18 T1200,22 L1200,80 Z" fill="#2C2416"></path>
+        <path d="M0,80 L0,20 Q150,5 300,25 T600,15 Q750,30 900,18 T1200,22 L1200,80 Z" fill="var(--bg-light)"></path>
         <defs>
           <linearGradient id="index-social-proof-wave-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#FAF7F2"></stop>
@@ -2017,105 +2107,7 @@ body:has(.zappy-announcement-bar) .navbar:not(.zappy-catalog-menu):not(.mobile-s
   </div>
 </section>
 
-<section class="index-cta-contact-section" data-layout-spec="בית-cta-contact" id="cta-contact">
-  <div class="section-container">
-    <!-- Header -->
-    <div class="header-block">
-      <h2 class="section-title">בואו נבדוק יחד אם הסדנה מתאימה למקרה שלכם</h2>
-      <p class="section-subtitle">מלאו את השאלון הקצר וקבלו צ'ק-ליסט מסמכים מותאם אישית</p>
-    </div>
 
-    <!-- Form Card -->
-    <div class="quiz-card">
-      <form class="contact-form">
-        <!-- Question 1 -->
-        <div class="form-group">
-          <label class="form-label">מהו סוג המקרה שלך?</label>
-          <div class="options-grid">
-            <label class="option-card">
-              <input type="radio" name="case_type" value="neighbor" required="">
-              <span class="option-text">סכסוך שכנים</span>
-            </label>
-            <label class="option-card">
-              <input type="radio" name="case_type" value="flight" required="">
-              <span class="option-text">ביטול טיסה</span>
-            </label>
-            <label class="option-card">
-              <input type="radio" name="case_type" value="consumer" required="">
-              <span class="option-text">עוול צרכני</span>
-            </label>
-            <label class="option-card">
-              <input type="radio" name="case_type" value="default_judgment" required="">
-              <span class="option-text">בקשת ביטול פסק דין בהעדר הגנה</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Question 2 -->
-        <div class="form-group">
-          <label class="form-label">האם כבר הגשת מסמך כלשהו לבית המשפט בתיק זה?</label>
-          <div class="options-row">
-            <label class="option-card">
-              <input type="radio" name="filed_document" value="yes_rejected" required="">
-              <span class="option-text">כן, והוא נדחה או נמחק</span>
-            </label>
-            <label class="option-card">
-              <input type="radio" name="filed_document" value="no_before" required="">
-              <span class="option-text">לא, אני לפני הגשה</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Question 3 -->
-        <div class="form-group">
-          <label class="form-label">האם שכר הטרחה שנדרש מכם בחוץ הופך את התיק ללא כלכלי?</label>
-          <div class="options-row">
-            <label class="option-card">
-              <input type="radio" name="economically_viable" value="yes" required="">
-              <span class="option-text">כן</span>
-            </label>
-            <label class="option-card">
-              <input type="radio" name="economically_viable" value="no" required="">
-              <span class="option-text">לא</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Personal Details -->
-        <div class="personal-details">
-          <div class="input-group">
-            <label for="full-name" class="form-label">שם מלא</label>
-            <input type="text" id="full-name" name="full_name" class="text-input" required="" placeholder="ישראל ישראלי">
-          </div>
-          <div class="input-group">
-            <label for="email" class="form-label">דוא״ל</label>
-            <input type="email" id="email" name="email" class="text-input" required="" placeholder="israel@example.com">
-          </div>
-          <div class="input-group">
-            <label for="phone" class="form-label">טלפון</label>
-            <input type="tel" id="phone" name="phone" class="text-input" required="" placeholder="050-1234567">
-          </div>
-        </div>
-
-        <!-- Privacy Consent -->
-        <div class="privacy-consent">
-          <label class="privacy-consent-label">
-            <input type="checkbox" name="privacy_consent" class="privacy-consent-checkbox" required="">
-            <span>קראתי ואני מסכים/ה ל<a href="/terms" target="_blank">תנאי השימוש</a> ול<a href="/privacy" target="_blank">מדיניות הפרטיות</a></span>
-          </label>
-        </div>
-
-        <!-- Submit -->
-        <button type="submit" class="btn-submit">שלחו לי צ'ק-ליסט מסמכים מלא ותאמו מקום בסדנה</button>
-      </form>
-
-      <!-- Decorative Image -->
-      <div class="decorative-image-wrapper">
-        <img data-context="A warm, inviting flat-lay photograph of a wooden desk with a cup of coffee, an open notebook with handwritten notes about small claims law, a pair of reading glasses, and a pen. The lighting is soft morning light from a window, creating a calm, approachable atmosphere that suggests a friendly legal workshop environment." width="600" height="400" src="/assets/image-legal-education-section-cta-contact-index-cta-contact-image-1.webp" alt="אווירת סדנה משפטית חמה ומזמינה" loading="lazy" decoding="async" fetchpriority="low">
-      </div>
-    </div>
-  </div>
-</section>
 
 
 
@@ -2130,165 +2122,166 @@ body:has(.zappy-announcement-bar) .navbar:not(.zappy-catalog-menu):not(.mobile-s
 
 
 
-<section class="glow-curriculum-section" dir="rtl">
-  <div class="glow-container">
-    <h2 class="glow-section-title">מה תלמדו בקורס?</h2>
-    <div class="glow-curriculum-grid">
-      <div class="glow-curriculum-column">
-        <h3 class="glow-curriculum-column-title">יסודות</h3>
-        <ul class="glow-curriculum-list">
-          <li class="glow-curriculum-item">
-            <span class="glow-check-icon">✓</span>
-            <span>מבוא לבינה מלאכותית בעולם המשפט</span>
-          </li>
-          <li class="glow-curriculum-item">
-            <span class="glow-check-icon">✓</span>
-            <span>בניית תשתית דיגיטלית למשרד</span>
-          </li>
-          <li class="glow-curriculum-item">
-            <span class="glow-check-icon">✓</span>
-            <span>אוטומציה של תהליכים משפטיים</span>
-          </li>
-          <li class="glow-curriculum-item">
-            <span class="glow-check-icon">✓</span>
-            <span>ניהול ידע משפטי חכם</span>
-          </li>
-        </ul>
-      </div>
-      <div class="glow-curriculum-column">
-        <h3 class="glow-curriculum-column-title">מחקר ואימות</h3>
-        <ul class="glow-curriculum-list">
-          <li class="glow-curriculum-item">
-            <span class="glow-check-icon">✓</span>
-            <span>חיפוש תקדימים מבוסס AI</span>
-          </li>
-          <li class="glow-curriculum-item">
-            <span class="glow-check-icon">✓</span>
-            <span>ניתוח מסמכים אוטומטי</span>
-          </li>
-          <li class="glow-curriculum-item">
-            <span class="glow-check-icon">✓</span>
-            <span>בדיקת עובדות ואימות נתונים</span>
-          </li>
-          <li class="glow-curriculum-item">
-            <span class="glow-check-icon">✓</span>
-            <span>יצירת סיכומים משפטיים</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section class="glow-audience-section" dir="rtl">
-  <div class="glow-container">
-    <h2 class="glow-section-title">למי זה מתאים?</h2>
-    <div class="glow-audience-grid">
-      <div class="glow-audience-card">
-        <div class="glow-audience-icon">⚖️</div>
-        <h3 class="glow-audience-card-title">שותף בכיר</h3>
-        <p class="glow-audience-card-text">מנהל מחלקה או משרד שרוצה לייעל תהליכים ולהגדיל רווחיות</p>
-      </div>
-      <div class="glow-audience-card">
-        <div class="glow-audience-icon">🏢</div>
-        <h3 class="glow-audience-card-title">בעל משרד בוטיק</h3>
-        <p class="glow-audience-card-text">עורך דין עצמאי שמנהל את כל ההיבטים של המשרד לבדו</p>
-      </div>
-      <div class="glow-audience-card">
-        <div class="glow-audience-icon">🚀</div>
-        <h3 class="glow-audience-card-title">עורך דין צעיר</h3>
-        <p class="glow-audience-card-text">בתחילת הדרך, רוצה לבנות יתרון תחרותי כבר מהיום הראשון</p>
-      </div>
-      <div class="glow-audience-card">
-        <div class="glow-audience-icon">📚</div>
-        <h3 class="glow-audience-card-title">סטודנט או מתמחה</h3>
-        <p class="glow-audience-card-text">מתכונן לשוק העבודה עם כלים מתקדמים שאף אחד לא מלמד</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section class="glow-not-for-section" dir="rtl">
-  <div class="glow-container">
-    <h2 class="glow-section-title">למי זה <span class="glow-accent">לא</span> מתאים?</h2>
-    <div class="glow-not-for-grid">
-      <div class="glow-not-for-item">
-        <span class="glow-x-icon">✕</span>
-        <p>מי שמחפש פתרון קסם בלי להשקיע עבודה</p>
-      </div>
-      <div class="glow-not-for-item">
-        <span class="glow-x-icon">✕</span>
-        <p>מי שלא מוכן לאמץ טכנולוגיה חדשה</p>
-      </div>
-      <div class="glow-not-for-item">
-        <span class="glow-x-icon">✕</span>
-        <p>מי שמעדיף להישאר בשיטות עבודה מיושנות</p>
-      </div>
-      <div class="glow-not-for-item">
-        <span class="glow-x-icon">✕</span>
-        <p>מי שחושב ש-AI יחליף לחלוטין את עורך הדין</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section class="glow-method-section" dir="rtl">
-  <div class="glow-container">
-    <h2 class="glow-section-title">הכירו את השיטה: איך לגרום למערכת לעבוד בשבילכם</h2>
-    <div class="glow-method-grid">
-      <div class="glow-method-visual">
-        <div class="glow-method-diagram">
-          <div class="glow-method-center">
-            <div class="glow-method-center-icon">🧠</div>
-            <span>המוח הדיגיטלי שלך</span>
-          </div>
-          <div class="glow-method-branches">
-            <div class="glow-method-branch glow-method-branch--1">
-              <div class="glow-method-branch-dot"></div>
-              <div class="glow-method-branch-line"></div>
-            </div>
-            <div class="glow-method-branch glow-method-branch--2">
-              <div class="glow-method-branch-dot"></div>
-              <div class="glow-method-branch-line"></div>
-            </div>
-            <div class="glow-method-branch glow-method-branch--3">
-              <div class="glow-method-branch-dot"></div>
-              <div class="glow-method-branch-line"></div>
-            </div>
-            <div class="glow-method-branch glow-method-branch--4">
-              <div class="glow-method-branch-dot"></div>
-              <div class="glow-method-branch-line"></div>
-            </div>
-          </div>
+
+
+
+
+
+
+
+<section class="aviation-legal-shop" aria-labelledby="aviation-shop-heading">
+  <div class="aviation-shop-container">
+    <header class="aviation-shop-header">
+      <h2 id="aviation-shop-heading">דפי מידע – סיכומי פסיקה: זכויות נוסעים בתעופה</h2>
+      <p class="aviation-shop-subtitle">16 דפי מידע משפטיים הכוללים סיכומי פסיקה עדכניים בעילות תביעה שונות בתחום התעופה. כל דף מידע כולל ניתוח משפטי, אסמכתאות ופסיקה רלוונטית להגשת תביעה מוצלחת.</p>
+    </header>
+
+    <div class="aviation-grid" role="list"><article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">01</div>
+        <h3 class="aviation-card-title">עיכוב טיסה מעל 8 שעות</h3>
+        <p class="aviation-card-desc">סיכום פסיקה מלא בנושא פיצוי בגין עיכוב טיסה משמעותי. כולל ניתוח הוראות חוק שירותי תעופה (חוק טיבי), השתלשלות הזכויות, מבחני הזכאות, סכומי הפיצוי הקבועים בחוק, דוגמאות לפסיקות עדכניות והנחיות מעשיות לאיסוף הראיות ולניסוח מדויק של כתב התביעה.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/delay-8h" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: עיכוב טיסה מעל 8 שעות">לרכישה</a>
         </div>
-      </div>
-      <div class="glow-method-skills">
-        <h3 class="glow-method-skills-title">8 מיומנויות משפטיות (סוכנים משפטיים) שמוכנים מההתחלה</h3>
-        <div class="glow-method-skills-list">
-          <div class="glow-method-skill">
-            <span class="glow-method-skill-number">01</span>
-            <div class="glow-method-skill-content">
-              <h4>מנהל פרויקטים משפטי</h4>
-              <p>מתזמן, עוקב ומנהל את כל המשימות המשפטיות שלך</p>
-            </div>
-          </div>
-          <div class="glow-method-skill">
-            <span class="glow-method-skill-number">02</span>
-            <div class="glow-method-skill-content">
-              <h4>כותב AI</h4>
-              <p>מייצר טיוטות, כתבי טענות ומסמכים משפטיים בלחיצת כפתור</p>
-            </div>
-          </div>
-          <div class="glow-method-skill">
-            <span class="glow-method-skill-number">03</span>
-            <div class="glow-method-skill-content">
-              <h4>בונה מסמכים</h4>
-              <p>מרכיב מסמכים מורכבים מתבניות חכמות שמתעדכנות אוטומטית</p>
-            </div>
-          </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">02</div>
+        <h3 class="aviation-card-title">ביטול טיסה במועד סמוך</h3>
+        <p class="aviation-card-desc">מה נחשב ביטול טיסה סמוך למועד הטיסה ומהן חובות ההודעה המוקדמת של חברת התעופה. הדף מנתח את הפסיקה והזכויות לפיצוי, ההבחנה בין ביטול להחזרה, מתי קמה עילת תביעה, כיצד לתעד את הנזק שנגרם ואיך לחשב את סכום הפיצוי המגיע לכם לפי החוק.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/cancellation-near-departure" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: ביטול טיסה במועד סמוך">לרכישה</a>
         </div>
-      </div>
-    </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">03</div>
+        <h3 class="aviation-card-title">רישום יתר (אוברבוקינג)</h3>
+        <p class="aviation-card-desc">סירוב לעלות לטיסה בשל רישום יתר הוא הפרה נפוצה. הדף מסביר את זכויות הנוסע והפיצוי המגיע על פי חוק שירותי תעופה, לרבות ההבחנה בין סירוב מרצון לסירוב בכפייה, חובת הצעת החלופה, סיוע מיידי בשדה, וניתוח פסיקות רלוונטיות לקביעת היקף הפיצוי והדרך להוכיחו בתביעה.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/overbooking" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: רישום יתר וסירוב לעלות">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">04</div>
+        <h3 class="aviation-card-title">אובדן כבודה</h3>
+        <p class="aviation-card-desc">אובדן מזוודות בטיסה מהווה פגיעה משמעותית בנוסע. הדף מפרט את הליך ההדיווח על האובדן, סכומי הפיצוי הקבועים והמועדים, תקופת ההתיישנות להגשת התביעה, המסמכים והראיות הנדרשים להוכחת תכולת המזוודה וערכה, והנחיות לניסוח תביעה קטנה מבוססת ומנומקת מול חברת התעופה.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/lost-baggage" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: אובדן כבודה">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">05</div>
+        <h3 class="aviation-card-title">נזק או עיכוב בכבודה</h3>
+        <p class="aviation-card-desc">נזק למזוודה או עיכוב בהגעתה הם בסיס לפיצוי. הדף מסביר כמה מגיע לכם ומה צריך להוכיח, את ההבחנה בין נזק פיזי לעיכוב בשירות, חובת ההודעה בזמן אמת, שמירת התלוש והתיעוד, דרכי הוכחת שווי הפריטים שניזוקו, והתנהלות נכונה להגשת תביעה קטנה מוצלחת כנגד המוביל האווירי.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/baggage-damage-delay" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: נזק או עיכוב בכבודה">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">06</div>
+        <h3 class="aviation-card-title">שינוי מסלול טיסה</h3>
+        <p class="aviation-card-desc">שינוי מסלול ללא הודעה מוקדמת עלול לפגוע בזכויותיכם. הדף בוחן האם מדובר בהפרת חוזה ומתי מגיע פיצוי, את חובת הגילוי וההודעה מראש, ההשלכות של חניית ביניים או יעד אחר, הזכות להחזר במקרה של שינוי מהותי, וניתוח פסיקה המגדיר את גבולות האחריות של חברות התעופה.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/route-change" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: שינוי מסלול טיסה">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">07</div>
+        <h3 class="aviation-card-title">דחיית טיסה ליום המחרת</h3>
+        <p class="aviation-card-desc">נאלצתם לישון במלון בשל דחיית הטיסה? הדף מפרט את זכויותיכם ללינה, מזון ותחבורה על חשבון החברה, את חובת מתן הסיוע המיידי, שמירת הקבלות להוכחת ההוצאות, ואת אפשרות הפיצוי בגין הדחייה עצמה. כולל הנחיות כיצד לתעד את לוח הזמנים ואת הפגיעה שנגרמה לכם בפועל.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/next-day-delay" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: דחיית טיסה ליום המחרת">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">08</div>
+        <h3 class="aviation-card-title">הקדמת טיסה</h3>
+        <p class="aviation-card-desc">הקדמת טיסה משמעותית עלולה לשבש את תוכניותיכם כשם שעיכוב משבש. הדף בוחן האם מגיע פיצוי בגין שינוי מועד ההמראה למועד מוקדם, מהן דרישות ההודעה המוקדמת, ניתוח פסיקה בנושא שינוי חד-צדדי של לוח הזמנים, ומתי ניתן לראות בכך הפרת חוזה המזכה בפיצוי או בהחזר כספי.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/early-departure" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: הקדמת טיסה">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">09</div>
+        <h3 class="aviation-card-title">סירוב עלייה רפואי</h3>
+        <p class="aviation-card-desc">סירוב לעלות לטיסה בשל נסיבות רפואיות מעורר שאלות משפטיות מורכבות. הדף מסביר מתי זה חוקי ומתי מגיע פיצוי, את איזון האינטרסים בין בטיחות הטיסה לזכויות הנוסע, דרישות אישור רפואי לכשירות טיסה, ההבחנה בין סירוב מוצדק לסירוב מפלה, וניתוח פסיקות בתחום הנגישות והשוויון.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/medical-denied-boarding" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: סירוב עלייה רפואי">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">10</div>
+        <h3 class="aviation-card-title">פגיעה בנגישות</h3>
+        <p class="aviation-card-desc">נוסע עם מוגבלות שנפגע זכאי להגנה מוגברת בחקיקה. הדף מפרט את הזכויות המיוחדות בשירותי תעופה, חובות ההנגשה והסיוע, ההבחנה בין מגבלות רפואיות לעילות פיצוי, איסור האפליה, וניתוח פסיקה בתחום הנגישות בתעופה. כולל הנחיות לתיעוד הפגיעה ולהוכחת הקשר הסיבתי לצורך תביעה.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/accessibility-violation" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: פגיעה בנגישות">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">11</div>
+        <h3 class="aviation-card-title">הטעיה במחיר כרטיס</h3>
+        <p class="aviation-card-desc">הטעיה במחיר כרטיס הטיסה פוגעת באמון הצרכן ויוצרת עילת תביעה. הדף מנתח את חובת הגילוי המלא של מחיר הכולל מסים ועמלות, דרכי הצגת המחיר האסורות, ההבחנה בין פרסום מטעה להטעיה בפועל, וסמכות בתי המשפט לפסוק פיצוי. כולל ניתוח דיני הגנת הצרכן ותביעות צרכניות רלוונטיות.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/ticket-price-deception" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: הטעיה במחיר כרטיס">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">12</div>
+        <h3 class="aviation-card-title">החזר דמי טיפול</h3>
+        <p class="aviation-card-desc">דמי טיפול שנגבו שלא כדין הם מקור נפוץ לתביעות. הדף סוקר את הפסיקה בנושא החזרים כספיים מחברות תעופה, אילו חיובים נחשבים מותרים ואילו נגבים ללא עילה חוקית, חובת השקיפות בפירוט החיובים, הזכות להשבת תשלומים שנגבו ביתר, ודרכי הוכחת גביית היתר בתביעה קטנה.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/handling-fees-refund" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: החזר דמי טיפול">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">13</div>
+        <h3 class="aviation-card-title">שירות לקוי בשדה</h3>
+        <p class="aviation-card-desc">חובת הסיוע בשדה התעופה היא חלק מהזכויות. הדף בוחן מה קורה כשחברת התעופה לא סיפקה עזרה, מהן חובות השירות המינימליות בחוק (מזון, שתייה, תקשורת ולינה), כיצד לתעד את היעדר הסיוע בזמן אמת, אילו הוצאות ניתן לדרוש כהשבה, וניתוח פסיקה בנושא הפרת חובת הסיוע.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/poor-airport-service" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: שירות לקוי בשדה">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">14</div>
+        <h3 class="aviation-card-title">פגיעה בפרטיות</h3>
+        <p class="aviation-card-desc">אובדן מידע אישי או פגיעה בפרטיות במהלך הטיסה מזכים בסעד. הדף מפרט את חובות אבטחת המידע של חברות התעופה, ההשלכות של חשיפת פרטים אישיים, ההגנות הקבועות בחוק הגנת הפרטיות, כיצד להוכיח את הנזק שנגרם, וניתוח פסיקה בנושא תביעות פרטיות כנגד ספקי שירותי תעופה.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/privacy-breach" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: פגיעה בפרטיות">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">15</div>
+        <h3 class="aviation-card-title">עוגמת נפש ונזק לא ממוני</h3>
+        <p class="aviation-card-desc">תביעה בגין עוגמת נפש היא תחום עדין המצריך ביסוס. הדף מנתח את הפסיקה המנחה, התנאים שבהם בית המשפט פוסק פיצוי בגין נזק לא ממוני, ההבחנה בין הטרדה קלה לעוגמת נפש של ממש, היקפי הפיצוי המקובלים בפסיקה, ודרכי ההוכחה והניסוח הנדרשות לביסוס עילת הפיצוי הזו.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/emotional-distress" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: עוגמת נפש">לרכישה</a>
+        </div>
+      </article>
+
+      <article class="aviation-card" role="listitem">
+        <div class="aviation-card-number" aria-hidden="true">16</div>
+        <h3 class="aviation-card-title">מקרים חריגים</h3>
+        <p class="aviation-card-desc">שביתה, מזג אוויר קיצוני ונסיבות מבצעיות פוטרות לעיתים חברת תעופה מפיצוי. הדף מסביר מתי חל הפטור בשל נסיבות מיוחדות שאינן בשליטת החברה, ההבחנה בין כח עליון לליקויים תפעוליים, נטל ההוכחה המוטל על חברת התעופה, וניתוח פסיקה המגדיר את גבולות הגנת הנסיבות החריגות.</p>
+        <div class="aviation-card-footer">
+          <a href="https://pay.finbot.co.il/claim-school/extraordinary-circumstances" class="aviation-btn" target="_blank" rel="noopener noreferrer" aria-label="לרכישה: מקרים חריגים">לרכישה</a>
+        </div>
+      </article></div>
   </div>
 </section>
 
