@@ -634,6 +634,61 @@ window.onload = function() {
 })();
 /* ZAPPY_CUSTOM_JS_END:0b60973b05c4 */
 
+/* ZAPPY_CUSTOM_JS_START:7c2f1a68e76b */
+(function () {
+  function __zappyCustomInit() {
+    try {
+(function () {
+  function scrollToContact(ev) {
+    var btn = ev.currentTarget;
+    var card = btn.closest('.claim-card, .violation-card');
+    var heading = card ? card.querySelector('h3, .claim-card-heading') : null;
+    var formSection = document.getElementById('contact-form-section');
+    var targetKey = heading ? heading.textContent.trim() : '';
+
+    if (formSection) {
+      ev.preventDefault();
+      if (targetKey) {
+        var checked = false;
+        document.querySelectorAll('.grounds-grid input[type="checkbox"], .checkbox-grid input[type="checkbox"]').forEach(function (cb) {
+          var v = (cb.value || '').trim();
+          if (v && targetKey.indexOf(v) !== -1) {
+            cb.checked = true;
+            checked = true;
+          } else if (v && v.indexOf(targetKey) !== -1) {
+            cb.checked = true;
+            checked = true;
+          }
+        });
+        // Airline-specific checkboxes
+        if (!checked) {
+          document.querySelectorAll('input[name="airlines"]').forEach(function (cb) {
+            if (targetKey.indexOf(cb.value) !== -1 || (cb.value && cb.value.indexOf(targetKey) !== -1)) {
+              cb.checked = true;
+            }
+          });
+        }
+      }
+      formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  document.querySelectorAll('.claim-card-button, .card-btn').forEach(function (btn) {
+    btn.addEventListener('click', scrollToContact);
+  });
+})();
+    } catch (e) {
+      if (typeof console !== 'undefined' && console.warn) { console.warn('[zappy-custom-js]', e); }
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', __zappyCustomInit);
+  } else {
+    __zappyCustomInit();
+  }
+})();
+/* ZAPPY_CUSTOM_JS_END:7c2f1a68e76b */
+
 
 /* ZAPPY_PUBLISHED_LIGHTBOX_RUNTIME */
 (function(){
