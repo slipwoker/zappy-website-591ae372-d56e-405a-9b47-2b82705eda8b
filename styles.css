@@ -9331,6 +9331,11 @@ section.ethical-warning {
 .claims-cards-section button.claim-card-button {
   color: var(--background-color, var(--background, var(--bg-light, #0A0A0C))) !important;
 }
+
+:root {
+  --text-muted: var(--text-color, var(--text, var(--text-dark, #E8E8E8))) !important;
+  --text-secondary-color: var(--text-color, var(--text, var(--text-dark, #E8E8E8))) !important;
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
