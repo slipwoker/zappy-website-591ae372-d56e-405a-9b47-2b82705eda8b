@@ -563,6 +563,77 @@ window.onload = function() {
 })();
 /* ZAPPY_CUSTOM_JS_END:e7e25e455c9d */
 
+/* ZAPPY_CUSTOM_JS_START:0b60973b05c4 */
+(function () {
+  function __zappyCustomInit() {
+    try {
+(function () {
+  const form = document.querySelector('#contact-form-section form');
+  if (!form) return;
+
+  const submitBtn = form.querySelector('.submit-btn, button[type="submit"], .submit-button');
+  if (!submitBtn) return;
+
+  submitBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    const consent = form.querySelector('input[type="checkbox"][name="consent"]');
+    if (consent && !consent.checked) {
+      alert('יש לסמן את תיבת האישור "קראתי את ההבהרה המשפטית" כדי לשלוח את הפנייה.');
+      return;
+    }
+
+    const emailInput = form.querySelector('input[type="email"]');
+    if (emailInput && emailInput.required && !emailInput.value.trim()) {
+      alert('נא להזין כתובת אימייל.');
+      emailInput.focus();
+      return;
+    }
+
+    const firstName = (form.querySelector('input[name="first-name"]') || {}).value || '';
+    const phone = (form.querySelector('input[name="phone"]') || {}).value || '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    const story = (form.querySelector('textarea') || {}).value || '';
+
+    const checkedAirlines = Array.from(form.querySelectorAll('input[name="airlines"]:checked')).map(function(i){ return i.value; });
+    const checkedGrounds = Array.from(form.querySelectorAll('input[name="grounds"]:checked')).map(function(i){ return i.value; });
+
+    const allChecked = checkedAirlines.concat(checkedGrounds);
+    const selectedText = allChecked.length > 0 ? allChecked.join(', ') : '[לא סומן דף מידע ספציפי]';
+
+    const lines = ['פניית התעניינות – מקבצי פסיקה', 'דפי מידע שנבחרו: ' + selectedText];
+    if (email) lines.push('אימייל: ' + email);
+    if (firstName) lines.push('שם פרטי: ' + firstName);
+    if (phone) lines.push('טלפון: ' + phone);
+    if (story) lines.push('תיאור: ' + story);
+
+    const message = encodeURIComponent(lines.join('\n'));
+    const waUrl = 'https://wa.me/972523236556?text=' + message;
+
+    const thankYou = form.querySelector('.thank-you-message, .thank-you');
+    if (thankYou) thankYou.style.display = 'block';
+
+    const a = document.createElement('a');
+    a.href = waUrl;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
+})();
+    } catch (e) {
+      if (typeof console !== 'undefined' && console.warn) { console.warn('[zappy-custom-js]', e); }
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', __zappyCustomInit);
+  } else {
+    __zappyCustomInit();
+  }
+})();
+/* ZAPPY_CUSTOM_JS_END:0b60973b05c4 */
+
 
 /* ZAPPY_PUBLISHED_LIGHTBOX_RUNTIME */
 (function(){
