@@ -9336,6 +9336,49 @@ section.ethical-warning {
   --text-muted: var(--text-color, var(--text, var(--text-dark, #E8E8E8))) !important;
   --text-secondary-color: var(--text-color, var(--text, var(--text-dark, #E8E8E8))) !important;
 }
+
+.cta-closing-banner .cta-closing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.cta-closing-banner .cta-closing-actions .cta-closing-btn-primary,
+.cta-closing-banner .cta-closing-actions .cta-closing-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cta-closing-banner .cta-closing-actions .cta-closing-btn-primary {
+  background: var(--primary);
+  color: var(--background);
+  border: 1px solid var(--primary);
+}
+
+.cta-closing-banner .cta-closing-actions .cta-closing-btn-primary:hover {
+  background: var(--accent);
+}
+
+.cta-closing-banner .cta-closing-actions .cta-closing-btn-secondary {
+  background: transparent;
+  color: var(--text-light);
+  border: 1px solid rgba(0, 229, 255, 0.5);
+}
+
+.cta-closing-banner .cta-closing-actions .cta-closing-btn-secondary:hover {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: var(--primary);
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
