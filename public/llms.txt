@@ -72,7 +72,6 @@ Information about WCAG compliance and accessibility features.
   - `grounds` (checkbox)
   - `grounds` (checkbox)
   - `grounds` (checkbox)
-  - `description` (textarea)
   - `legal-consent` (checkbox, required)
 
 ---
