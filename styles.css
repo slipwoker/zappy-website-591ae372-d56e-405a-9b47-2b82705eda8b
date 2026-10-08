@@ -8653,6 +8653,45 @@ section.ethical-warning {
 .index-hero-section {
   background: linear-gradient(180deg, var(--background-color, var(--background, var(--bg-light, #FFFFFF))) 0%, var(--surface-color, var(--surface, #F7F0E6)) 100%) !important;
 }
+
+.claims-cards-section .claims-cluster {
+  margin-bottom: 48px;
+}
+
+.claims-cards-section .claims-cluster-title {
+  font-family: 'Assistant', 'Noto Sans Hebrew', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark, var(--text-color, var(--text, var(--text-dark, #2B2621))));
+  margin: 0 0 20px;
+  text-align: right;
+  padding-right: 16px;
+  border-right: 4px solid var(--primary, var(--accent-color, var(--accent, #C96F4A)));
+}
+
+.claims-cards-section .claims-cluster-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+.claims-cards-section .claims-cluster-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+}
+
+@media (max-width: 600px) {
+.claims-cards-section .claims-cluster-grid {
+  grid-template-columns: 1fr;
+}
+}
+/* zappy-self-heal */
+.claims-cards-section .claims-cluster-grid { display: grid !important; }
+
+/* zappy-self-heal */
+html body .claims-cards-section .claims-cluster-grid { display: grid !important; }
+
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
