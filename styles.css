@@ -8653,6 +8653,23 @@ section.ethical-warning {
 .index-hero-section {
   background: linear-gradient(180deg, var(--background-color, var(--background, var(--bg-light, #FFFFFF))) 0%, var(--surface-color, var(--surface, #F7F0E6)) 100%) !important;
 }
+
+.claims-cards-section .claims-cluster-title {
+  grid-column: 1 / -1;
+  width: 100%;
+  text-align: right;
+  font-family: 'Assistant', 'Noto Sans Hebrew', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 32px 0 8px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--primary);
+}
+
+.claims-cards-section .claims-cluster-title:first-of-type {
+  margin-top: 0;
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
