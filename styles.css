@@ -8670,6 +8670,35 @@ section.ethical-warning {
 .claims-cards-section .claims-cluster-title:first-of-type {
   margin-top: 0;
 }
+
+.claims-cards-section .claims-cluster-title {
+  display: block !important;
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  text-align: right;
+  font-family: 'Assistant', 'Noto Sans Hebrew', sans-serif;
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  color: var(--primary, var(--accent-color, var(--accent, #C96F4A))) !important;
+  background: var(--surface, var(--surface-color, var(--surface, #F7F0E6)));
+  padding: 14px 20px !important;
+  margin: 36px 0 14px !important;
+  border-radius: 10px;
+  border-right: 6px solid var(--primary, var(--accent-color, var(--accent, #C96F4A))) !important;
+  border-bottom: 0 !important;
+}
+
+.claims-cards-section .claims-cluster-title:first-of-type {
+  margin-top: 0 !important;
+}
+
+.claims-cards-section button.claim-card-button {
+  color: var(--primary, var(--accent-color, var(--accent, #C96F4A))) !important;
+}
+
+.claims-cards-section a.claim-card-button {
+  color: var(--primary, var(--accent-color, var(--accent, #C96F4A))) !important;
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
