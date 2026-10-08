@@ -8692,6 +8692,33 @@ section.ethical-warning {
 /* zappy-self-heal */
 html body .claims-cards-section .claims-cluster-grid { display: grid !important; }
 
+
+#claims-cards-section .claims-cards-grid {
+  display: block !important;
+}
+
+#claims-cards-section .claims-cluster-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 24px !important;
+}
+
+#claims-cards-section .claims-cluster-grid .claim-card {
+  width: auto !important;
+  max-width: none !important;
+}
+
+@media (max-width: 900px) {
+#claims-cards-section .claims-cluster-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+}
+
+@media (max-width: 600px) {
+#claims-cards-section .claims-cluster-grid {
+  grid-template-columns: 1fr !important;
+}
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
