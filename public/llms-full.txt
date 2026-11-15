@@ -2,13 +2,13 @@
 
 An online legal education school led by Attorney and Dr. (Information Science) Yosef Solomon, targeting a general audience with a focus on young adults. The school teaches selected legal rights, practical skills for locating legal information in legal databases (legislation and case law), and how to properly prepare and file small claims independently. The tone is accessible, empowering, and beginner-friendly, with real-life examples and simulations. Classes are held online on Fridays. The brand combines legal authority with approachability, aiming to demystify the legal system for everyday people.
 
-Source: https://small-claims-school-dr-yosef-s.zappy5.app
+Source: https://www.yosefsolomon.phd
 
 ---
 
 ## בית הספר לתביעות קטנות | תמציות מידע מפסקי דין נבחרים | עו"ד ד"ר (מדעי המידע) יוסף סולומון
 
-URL: https://small-claims-school-dr-yosef-s.zappy5.app
+URL: https://www.yosefsolomon.phd
 Description: תמציות מידע מפסקי דין נבחרים על זכויות נוסעים בתעופה לתמיכה בתביעה קטנה שאתם מגישים בעצמכם. בהכנת עו"ד ד"ר (מדעי המידע) יוסף סולומון.
 
 בית הספר לתביעות קטנות | תמציות מידע מפסקי דין נבחרים | עו"ד ד"ר (מדעי המידע) יוסף סולומון
@@ -679,7 +679,7 @@ Description: תמציות מידע מפסקי דין נבחרים על זכוי�
 
 
 
-לקבלת מידע על דף המידע, תוכנו, העלות, ואופן השימוש בו - צרו קשר.  דר"כ עלותו של דף מידע היא 275 ₪ (כולל מע"מ). המוצר אחיד וזהה לכל הרוכשים, ואינו שירות משפטי אישי המחושב לפי שעות עבודה בפועל.  מי שזקוק לייעוץ משפטי פרטני בנסיבות מקרה מסויים, מתבקש לפנות בנפרד לעו"ד לפי בחירתו.
+לקבלת מידע על דף המידע, תוכנו, העלות, ואופן השימוש בו - צרו קשר.  דר"כ עלותו של דף מידע היא 275 ₪ (כולל מע"מ). עו"ד וד"ר (מדעי המידע) יוסף סולומון התוכן מתעדכן עם לפי פסקי דין חדשים ורלבנטיים, אך אחיד וזהה לכל הרוכשים, ואינו שירות משפטי אישי המחושב לפי שעות עבודה בפועל.  מי שזקוק לייעוץ משפטי פרטני בנסיבות מקרה מסויים, מתבקש לפנות בנפרד לעו"ד לפי בחירתו.
 
 
 
@@ -766,7 +766,7 @@ https://SmallClaim.DrSolomon.Law
 
 ## מדיניות פרטיות
 
-URL: https://small-claims-school-dr-yosef-s.zappy5.app/privacy
+URL: https://www.yosefsolomon.phd/privacy
 Description: מדיניות הפרטיות שלנו - כיצד אנו אוספים, משתמשים ומגנים על המידע שלכם
 
 מדיניות פרטיות
@@ -986,7 +986,7 @@ https://SmallClaim.DrSolomon.Law
 
 ## הצהרת נגישות
 
-URL: https://small-claims-school-dr-yosef-s.zappy5.app/accessibility
+URL: https://www.yosefsolomon.phd/accessibility
 Description: הצהרת הנגישות שלנו - מחויבותנו לנגישות דיגיטלית
 
 הצהרת נגישות
@@ -1242,7 +1242,7 @@ https://SmallClaim.DrSolomon.Law
 
 ## תנאי שימוש
 
-URL: https://small-claims-school-dr-yosef-s.zappy5.app/terms
+URL: https://www.yosefsolomon.phd/terms
 Description: תנאי השימוש באתר - הזכויות והחובות של המשתמשים
 
 תנאי שימוש
@@ -1479,7 +1479,7 @@ https://SmallClaim.DrSolomon.Law
 
 ## תודה שפניתם אלינו
 
-URL: https://small-claims-school-dr-yosef-s.zappy5.app/thank-you
+URL: https://www.yosefsolomon.phd/thank-you
 Description: בית הספר לתביעות קטנות - תודה שפניתם אלינו
 
 תודה שפניתם אלינו
