@@ -8728,6 +8728,10 @@ section.ethical-warning {
 .claims-cards-section a.claim-card-button {
   color: var(--background-color, var(--background, var(--bg-light, #FFFFFF))) !important;
 }
+
+body .whatsapp-float {
+  display: none !important;
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
