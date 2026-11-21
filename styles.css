@@ -8728,44 +8728,6 @@ section.ethical-warning {
 .claims-cards-section a.claim-card-button {
   color: var(--background-color, var(--background, var(--bg-light, #FFFFFF))) !important;
 }
-
-.index-hero-section .display-xl,
-.index-hero-section .display-xl span {
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
-  text-wrap: wrap !important;
-  text-wrap-mode: wrap !important;
-}
-
-.index-hero-section .display-xl span[style*="3rem"] {
-  font-size: initial !important;
-  text-wrap-mode: wrap !important;
-  white-space: normal !important;
-}
-
-@media (max-width: 768px) {
-.index-hero-section .display-xl {
-  font-size: 1.5rem !important;
-  line-height: 1.4 !important;
-}
-
-.index-hero-section .display-xl span {
-  font-size: 1.5rem !important;
-}
-
-.index-hero-section .hero-fade-content {
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-  max-width: 100% !important;
-  overflow-wrap: break-word !important;
-}
-}
-/* zappy-self-heal */
-.index-hero-section .display-xl span[style*="3rem"] { font-size: initial !important; }
-
-/* zappy-self-heal */
-html body .index-hero-section .display-xl span[style*="3rem"] { font-size: initial !important; }
-
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
